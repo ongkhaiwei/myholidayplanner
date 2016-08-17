@@ -1,0 +1,34 @@
+{
+    "destination": [
+        {
+            "id": "1",
+            "name": "London",
+            "country": "United Kingdom",
+            "IATA": "LON"
+        },
+        {
+            "id": "2",
+            "name": "Istanbul",
+            "country": "Turkey",
+            "IATA": "IST"
+        },
+        {
+            "id": "3",
+            "name": "Marrakech",
+            "country": "Morocco",
+            "IATA": "RAK"
+        },
+        {
+            "id": "4",
+            "name": "Paris",
+            "country": "France",
+            "IATA": "PAR"
+        },
+        {
+            "id": "5",
+            "name": "Siem Reap",
+            "country": "Cambodia",
+            "IATA": "REP"
+        }
+    ]
+}
