@@ -63,7 +63,7 @@ app.get('/location/:iata', function(req, res) {
 
 	var options = {
 		method: 'GET',
-	 	url: 'https://api.sandbox.amadeus.com/v1.2/location/' + req.params.iata + '?apikey=' + a_apikey
+	 	url: 'https://api.sandbox.amadeus.com/v1.2/location/' + req.params.iata + '?apikey=' + amadeus_apikey
 	};
 
 	request(options, function (error, response, body) {
@@ -82,7 +82,7 @@ app.get('/poi/:latitude/:longitude', function(req, res) {
 
 	var options = {
 		method: 'GET',
-	 	url: 'http://terminal2.expedia.com/x/geo/features?within=5km&lng=' + req.params.longitude + '&lat=' + req.params.latitude + '&type=point_of_interest&verbose=3&lcid=1033&apikey=' + e_apikey
+	 	url: 'http://terminal2.expedia.com/x/geo/features?within=5km&lng=' + req.params.longitude + '&lat=' + req.params.latitude + '&type=point_of_interest&verbose=3&lcid=1033&apikey=' + expedia_apikey
 	};
 
 	request(options, function (error, response, body) {
@@ -153,7 +153,7 @@ app.get('/flights/:iata', function(req,res) {
 
 	var options = {
 		method: 'GET',
-	 	url: 'https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?apikey=' + a_apikey + '&origin='+origin+'&destination=' + req.params.iata+ '&departure_date=2016-11-25&include_airlines=' + airline + '&nonstop=true&currency=SGD&number_of_results=5'
+	 	url: 'https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?apikey=' + amadeus_apikey + '&origin='+origin+'&destination=' + req.params.iata+ '&departure_date=2016-11-25&include_airlines=' + airline + '&nonstop=true&currency=SGD&number_of_results=5'
 	};
     console.log(options.url);
 	request(options, function (error, response, body) {
