@@ -1,52 +1,57 @@
-/*eslint-env node*/
+/**
+ * My Holiday Planner
+ *
+ * Copyright 2016 IBM Corp. All Rights Reserved
+ *
+ *  Author
+ *  Ong Khai Wei
+ *  ongkhaiwei@gmail.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-//------------------------------------------------------------------------------
-// node.js starter application for Bluemix
-//------------------------------------------------------------------------------
+// app.js
 
-// This application uses express as its web server
-// for more info, see: http://expressjs.com
+'use-strict';
+
 var express = require('express');
 var fs = require('fs');
 var bodyParser = require('body-parser');
-
-// cfenv provides access to your Cloud Foundry environment
-// for more info, see: https://www.npmjs.com/package/cfenv
 var cfenv = require('cfenv');
+var request = require("request");
 
 // create a new express server
 var app = express();
 var appEnv = cfenv.getAppEnv();
 
-// serve the files out of ./public as our main files
-app.use(express.static(__dirname + '/public'));
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-app.engine('html', require('ejs').renderFile);
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-var request = require("request");
-
-var a_apikey='2jHs8hy1v9zq4yd1tGG8K6cbhmVc9t5r';
-var e_apikey='EExYERlrN4PPxw0aS55s9bzx4wrOCdR3';
+var amadeus_apikey = process.env.AMADEUS_APIKEY;
+var expedia_apikey = process.env.EXPEDIA_APIKEY;
 
 var weather_host = appEnv.services["weatherinsights"] 
         ? appEnv.services["weatherinsights"][0].credentials.url // Insights for Weather credentials passed in
-        : "https://179013f4-3915-43c7-94f4-6c8bb5ecc11b:KeWO8LLnNI@twcservice.mybluemix.net"; 
+        : ""; 
 
-// get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
-
-
+// serve the files out of ./public as our main files
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.get('/destination', function(req, res) {
 	var data = JSON.parse(fs.readFileSync('tripsadvisor2016.json'));
-    
 	res.status(200).send(data.destination[random(4,0)]);
     //fs.createReadStream('tripsadvisor2016.json').pipe(res);
 });
-
 
 function random (max,min) {
     return Math.round(Math.random() * (max - min) + min);
@@ -134,7 +139,7 @@ app.get('/weather/:latitude/:longitude', function(req, res) {
         	var weather_forecast = { 
         		day1: {	min: data1.min_temp, max: data1.max_temp, dow: data1.dow },
         		day2: {	min: data2.min_temp, max: data2.max_temp, dow: data2.dow },
-        		day3: {	min: data3.min_temp, max: data3.max_temp, dow: data2.dow }
+        		day3: {	min: data3.min_temp, max: data3.max_temp, dow: data3.dow }
         	} 
             res.status(200).send(weather_forecast);
         }
@@ -150,20 +155,17 @@ app.get('/flights/:iata', function(req,res) {
 		method: 'GET',
 	 	url: 'https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?apikey=' + a_apikey + '&origin='+origin+'&destination=' + req.params.iata+ '&departure_date=2016-11-25&include_airlines=' + airline + '&nonstop=true&currency=SGD&number_of_results=5'
 	};
-
+    console.log(options.url);
 	request(options, function (error, response, body) {
 	  if (error) throw new Error(error);
-
+      console.log("a:"+body);
 	  var data = JSON.parse(body);
 	  res.status(200).send(data);
 
 	});
 
 
-}); 
-
-https://api.sandbox.amadeus.com/v1.2/flights/low-fare-search?apikey=2jHs8hy1v9zq4yd1tGG8K6cbhmVc9t5r&origin=SIN&destination=LON&departure_date=2016-11-25&include_airlines=SQ&number_of_results=5
-
+});
 
 // start server on the specified port and binding host
 app.listen(appEnv.port, '0.0.0.0', function() {
